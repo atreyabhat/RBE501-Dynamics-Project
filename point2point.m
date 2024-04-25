@@ -1,5 +1,5 @@
 clear, clc, close all
-addpath('/lib');
+addpath('lib');
 plotOn = false;
 
 % Create the environment
@@ -17,7 +17,7 @@ n = size(S,2); % read the number of joints
 [Mlist,Glist] = make_dynamics_model(robot);
 
 %% Control the motion of the robot between 2 set points
-fprintf('---------------------- Dynamic Control of a 3-DoF Arm --------------------\n');
+fprintf('---------------------- Dynamic Control of a Kuka Arm --------------------\n');
 
 path = [0 0.3 0.15;
         0.25 0 0.1]';
@@ -34,7 +34,7 @@ waypoints = zeros(n,nPts);
 
 %%
 % Current Pose and Joint Angles of Arm
-M = xyzrpy_to_transformation(1,1,1,1,1,1);
+% M = xyzrpy_to_transformation(1,1,1,1,1,1);
 currentQ = zeros(1,7);
 currentPose = MatrixLog6(M);
 currentPose = [currentPose(3,2) currentPose(1,3) currentPose(2,1) currentPose(1:3,4)']';
@@ -84,6 +84,9 @@ end
 fprintf('IK Done.\n');
 % %
 
+%% Torque-Based Motion Control
+% YOUR CODE HERE
+
 % Now, for each pair of consecutive waypoints, we will first calculate a
 % trajectory between these two points, and then calculate the torque
 % profile necessary to move from one point to the next.
@@ -96,16 +99,17 @@ tau_acc = [];
 jointPos_acc = [];
 t_acc = [];
 
+nPts = size(waypoints,2);
+
 for jj = 1 : nPts - 1
     fprintf(repmat('\b',1,nbytes));
     nbytes = fprintf('%3.0f%%', 100*(jj/(nPts - 1)));
-
+   
     % Initialize the time vector
-    dt = 1;       % time step [s]
-    t  = 0 : dt : 5; % total time [s]
+    dt = 0.1;       % time step [s]
+    t  = 0:dt:1; % total time [s]
 
-    % Initialize the arrays where we will accumulate the output of the robot
-    % dynamics
+    % Initialize the arrays where we will accumulate the output of the robot dynamics
     jointPos_prescribed = zeros(n,size(t,2)); % Joint Variables (Prescribed)
     jointVel_prescribed = zeros(n,size(t,2)); % Joint Velocities (Prescribed)
     jointAcc_prescribed = zeros(n,size(t,2)); % Joint Accelerations (Prescribed)
@@ -125,8 +129,7 @@ for jj = 1 : nPts - 1
 
         traj = make_trajectory('quintic', params_traj);
 
-        % Generate the joint profiles (position, velocity, and
-        % acceleration)
+        % Generate the joint profiles (position, velocity, and acceleration)
         jointPos_prescribed(ii,:) = traj.q;
         jointVel_prescribed(ii,:) = traj.v;
         jointAcc_prescribed(ii,:) = traj.a;
@@ -151,37 +154,32 @@ for jj = 1 : nPts - 1
         params_rne.jointPos = jointPos_prescribed(:,ii);
         params_rne.jointVel = jointVel_prescribed(:,ii);
         params_rne.jointAcc = jointAcc_prescribed(:,ii);
-
-        % Change Here
-        Ftip = zeros(6,1); % end effector wrench
-        T = fkine(S,M,params,jointPos,'space');
-        Ftip_space = [cros(T(1:3,4), -g),-g];
+        
+        % 0.5 kg payload
+        T = fkine(S,M,params_rne.jointPos,'space');
+        Ftip_space = [cross(T(1:3,4), -0.5*g), -0.5*g];
         params_rne.Ftip = adjoint(T)*Ftip_space';
-        %%%%
-
+        
         tau_prescribed(:,ii) = rne(params_rne);
 
-        % Feed the torques to the forward dynamics model and perform one
-        % simulation step
+        % Feed the torques to the forward dynamics model and perform one simulation step
         params_fdyn.jointPos = jointPos_actual(:,ii);
         params_fdyn.jointVel = jointVel_actual(:,ii);
         params_fdyn.tau = tau_prescribed(:,ii);
-
-        params_fdyn.Ftip = zeros(6,1); % end effector wrench
-        params_fdyn.Ftip = Ftip; 
+        params_fdyn.Ftip = params_rne.Ftip; % end effector wrench
 
         jointAcc = fdyn(params_fdyn);
 
-        % Integrate the joint accelerations to get velocity and
-        % position
+        % Integrate the joint accelerations to get velocity and position
         jointVel_actual(:,ii+1) = dt * jointAcc + jointVel_actual(:,ii);
         jointPos_actual(:,ii+1) = dt * jointVel_actual(:,ii) + jointPos_actual(:,ii);
     end
 
     tau_prescribed(:,end) = tau_prescribed(:,end-1);
-
+    
     tau_acc = [tau_acc tau_prescribed];
     jointPos_acc = [jointPos_acc jointPos_actual];
+    
     t_acc = [t_acc t+t(end)*(jj-1)];
 end
 

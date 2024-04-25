@@ -8,6 +8,6 @@ function J = jacob0(S,q)
         for j = 2:i
             T = T * twist2ht(S(:,j-1),q(j-1));
         end
-        J(:,i) = adjoint(S(:,i),T);
+        J(:,i) = adjoint_old(S(:,i),T);
     end
 end
