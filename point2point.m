@@ -187,7 +187,7 @@ fprintf('\nDone. Simulating the robot...');
 
 %% Animate the robot
 title('Inverse Dynamics Control');
-robot.plot(jointPos_acc(:,1:100:end)','trail',{'r', 'LineWidth', 2}, 'movie', 'RBE-501-2023-HW5-point2point.avi');
+% robot.plot(jointPos_acc(:,1:100:end)','trail',{'r', 'LineWidth', 2}, 'movie', 'RBE-501-2023-HW5-point2point.avi');
 fprintf('Done.\n');
 
 %% Display the Joint Torques
