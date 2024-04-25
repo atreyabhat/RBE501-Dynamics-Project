@@ -11,8 +11,6 @@ function [Mlist,Glist] = make_dynamics_model(robot)
 [M01, M12, M23, M34, M45, M56, M67, M78] = calculatelinkframes(robot);
 Mlist = cat(3, M01, M12, M23, M34, M45, M56, M67, M78);
 
-
-
 %% Spatial Inertia Matrices
 % *** Define the link inertial properties ***
 

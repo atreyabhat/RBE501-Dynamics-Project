@@ -1,5 +1,5 @@
 clear, clc, close all
-addpath('../lib');
+addpath('/lib');
 plotOn = false;
 
 % Create the environment
