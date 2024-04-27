@@ -53,14 +53,17 @@ function Guide_Project_OpeningFcn(hObject, eventdata, handles, varargin)
 % varargin   command line arguments to Guide_Project (see VARARGIN)
 clc;
 global prev_pos;
-% pos = prev_position([0 0 0]',"save");
 prev_pos = [0 0 1.315 0 0 0]';
 global prev_angles;
 prev_angles = zeros(1,7);
 robot = make_robot();
 axes(handles.axes1);
+scatter3(0, 0, 1.315, 'filled');
 robot.plot(zeros(1,7));
-
+cla(handles.axes2);
+cla(handles.axes3);
+cla(handles.axes4);
+cla(handles.axes5);
 
 % Choose default command line output for Guide_Project
 handles.output = hObject;
@@ -104,7 +107,7 @@ F_z = str2double(get(handles.ForceZ,"String"));
 Force = [F_x, F_y, F_z];
 
 % Clear the Plots
-clc;
+% clc;
 cla(handles.axes2);
 cla(handles.axes3);
 cla(handles.axes4);
@@ -115,7 +118,10 @@ global prev_pos;
 init_point = prev_pos;
 global prev_angles;
 currentangle = prev_angles;
-
+% Print Current Pose
+% fprintf("Current Pose")
+% disp(init_point)
+% disp(currentangle)
 % Solve RNE
 path = [init_point [X Y Z roll pitch yaw]'];
 [flag, angles, t_acc, jointpos, jointvel, jointacc, tau_acc] = point2point(path, currentangle, Force);
@@ -129,8 +135,9 @@ robot = make_robot();
 
 % Plot the results
 l = size(t_acc,2);
-for ii = 1:100:l
+for ii = 1:50:l
     axes(handles.axes1);
+    scatter3(path(1,2), path(2,2), path(3,2), 'filled');
     robot.plot(jointpos(:,ii)');
 
     axes(handles.axes2);
@@ -213,9 +220,14 @@ for ii = 1:100:l
     pause(0.01);
 end
 
-% Save the current pose
+% Save the updated pose
 prev_pos = [X Y Z roll pitch yaw]';
 prev_angles = angles;
+% Print Current Pose
+% fprintf("Updated Pose")
+% disp(prev_pos)
+% disp(prev_angles)
+
 
 function editX_Callback(hObject, eventdata, handles)
 % hObject    handle to editX (see GCBO)

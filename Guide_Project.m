@@ -58,6 +58,7 @@ global prev_angles;
 prev_angles = zeros(1,7);
 robot = make_robot();
 axes(handles.axes1);
+scatter3(0, 0, 1.315, 'filled');
 robot.plot(zeros(1,7));
 cla(handles.axes2);
 cla(handles.axes3);
@@ -132,11 +133,12 @@ end
 
 robot = make_robot();
 
+% scatter3(path(1,2), path(2,2), path(3,2), 'filled');
 % Plot the results
 l = size(t_acc,2);
 for ii = 1:50:l
     axes(handles.axes1);
-    % scatter3(path(1,2), path(2,2), path(3,2), 'filled');
+    scatter3(path(1,2), path(2,2), path(3,2), 'filled');
     robot.plot(jointpos(:,ii)');
 
     axes(handles.axes2);
@@ -218,7 +220,7 @@ for ii = 1:50:l
     drawnow; % This command forces MATLAB to draw the plots immediately
     pause(0.01);
 end
-
+axes(handles.axes1);
 % Save the updated pose
 prev_pos = [X Y Z roll pitch yaw]';
 prev_angles = angles;
