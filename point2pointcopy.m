@@ -1,4 +1,5 @@
-function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual, tau_acc] = point2point(path, currentangles, Force)
+
+clc; clear; close all;
 addpath('lib');
 plotOn = false;
 
@@ -7,6 +8,7 @@ g = [0 0 -9.81]; % Gravity Vector [m/s^2]
 
 % Create the robot and display it in the home configuration
 robot = make_robot();
+robot.plot(zeros(1,7));
 
 % Create a kinematic model of the robot
 [S,M] = make_kinematics_model(robot);
@@ -17,6 +19,9 @@ n = size(S,2); % read the number of joints
 
 %% Control the motion of the robot between 2 set points
 fprintf('---------------------- Dynamic Control of a Kuka Arm --------------------\n');
+
+path = [0 0 1.315 0 0 0;
+       0.5 0 0.5 0 0 0]';
 
 nPts = size(path,2);
 
@@ -39,10 +44,10 @@ max_iterations = 10000;
 
 % Initialize the counter
 iteration = 0;
-lambda = 0.1;
+lambda = 0.2;
 
 waypoints = zeros(n,nPts);
-waypoints(:, 1) = currentangles;
+waypoints(:, 1) = zeros(1,7);
 for i = 2:size(path,2)
     % Desired end-effector position and orientation
     desiredPose = xyzrpy_to_transformation(path(:,2));
@@ -52,7 +57,7 @@ for i = 2:size(path,2)
     while norm(currentPose - desiredPose) > 1e-3
         % Check if the iteration limit has been reached
         if iteration >= max_iterations
-            disp('Unable to Solve Inverse Kinematics');
+            disp('Iteration limit reached');
             flag = false;
             [t_acc, jointPos_acc, jointVel_actual, jointAcc_actual, tau_acc] = deal(0, 0, 0, 0, 0);
             return;
@@ -75,12 +80,6 @@ for i = 2:size(path,2)
     
         % Increment the counter
         iteration = iteration + 1;
-    end
-    if checklimits(currentQ) == 0
-            disp('Unable to Solve Inverse Kinematics');
-            flag = false;
-            [t_acc, jointPos_acc, jointVel_actual, jointAcc_actual, tau_acc] = deal(0, 0, 0, 0, 0);
-            return;
     end
     waypoints(:,i) = currentQ';
 end
@@ -158,12 +157,11 @@ for jj = 1 : nPts - 1
         params_rne.jointPos = jointPos_prescribed(:,ii);
         params_rne.jointVel = jointVel_prescribed(:,ii);
         params_rne.jointAcc = jointAcc_prescribed(:,ii);
-        
-        % Total Force
-        Total_Force = Force;
+       
         T = fkine(S,M,params_rne.jointPos,'space');
-        Ftip_space = [cross(T(1:3,4), Total_Force), Total_Force];
-        params_rne.Ftip = adjoint(T)*Ftip_space';
+        Ftip_space = [cross(T(1:3,4), -g), -g];
+        params_rne.Ftip = adjoint(T)'*Ftip_space';
+        params_rne.Ftip = zeros(1,6)';
         
         tau_prescribed(:,ii) = rne(params_rne);
 
@@ -188,5 +186,28 @@ for jj = 1 : nPts - 1
     t_acc = [t_acc t+t(end)*(jj-1)];
 end
 
+fprintf('\nDone. Simulating the robot...');
+
+%% Animate the robot
+title('Inverse Dynamics Control');
+robot.plot(jointPos_acc(:,1:50:end)','trail',{'r', 'LineWidth', 2}, 'movie', 'RBE-501-2023-HW5-point2point.avi');
+fprintf('Done.\n');
+
+%% Display the Joint Torques
+figure, hold on, grid on
+plot(t_acc, tau_acc(1,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(2,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(3,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(4,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(5,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(6,:), 'Linewidth', 2);
+plot(t_acc, tau_acc(7,:), 'Linewidth', 2);
+
+title('Torque Profiles');
+xlabel('Time [s]'), ylabel('Torque [Nm]');
+legend({'Joint 1', 'Joint 2', 'Joint 3','Joint 4','Joint 5','Joint 6','Joint 7'});
+set(gca, 'FontSize', 14);
+
+fprintf('Program completed successfully.\n');
 flag = true;
-end
+
