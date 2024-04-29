@@ -15,4 +15,5 @@ function T = fkine(S,M,q,frame)
         for i=2:joints
             T = T * twist2ht(S(:,i),q(i));
         end
+    end
 end

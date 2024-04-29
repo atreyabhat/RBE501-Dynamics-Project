@@ -1,4 +1,4 @@
-function AdT = adjoint_n(T)
+function AdT = adjoint(T)
     % Extract R and p
     R = T(1:3,1:3);
     p = T(1:3,4);
