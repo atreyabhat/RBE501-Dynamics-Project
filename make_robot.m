@@ -11,6 +11,9 @@ function robot = make_robot()
 %   Author: L. Fichera <lfichera@wpi.edu>
 %   Last modified: 4/05/2023
 
+%% URL for Robot URDF
+% https://github.com/miladehghani/KUKA_IIWA_URDF/blob/master/iiwa14.urdf
+
 %% Create the manipulator
 L1 = 0.360; 
 L3 = 0.429; 
@@ -24,7 +27,7 @@ robot = SerialLink([Revolute('a', 0, 'd', L1, 'alpha', -pi/2), ...
                     Revolute('a', 0, 'd', L5, 'alpha', -pi/2), ...
                     Revolute('a', 0, 'd', 0, 'alpha', pi/2), ...
                     Revolute('a', 0, 'd', L7, 'alpha', 0)], ...
-                    'name', 'KUKA IIWA 7');
+                    'name', 'KUKA IIWA 14');
 
 
 end

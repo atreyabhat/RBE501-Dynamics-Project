@@ -1,35 +1,35 @@
-function varargout = Guide_Project(varargin)
-% GUIDE_PROJECT MATLAB code for Guide_Project.fig
-%      GUIDE_PROJECT, by itself, creates a new GUIDE_PROJECT or raises the existing
+function varargout = run_gui(varargin)
+% RUN_GUI MATLAB code for run_gui.fig
+%      RUN_GUI, by itself, creates a new RUN_GUI or raises the existing
 %      singleton*.
 %
-%      H = GUIDE_PROJECT returns the handle to a new GUIDE_PROJECT or the handle to
+%      H = RUN_GUI returns the handle to a new RUN_GUI or the handle to
 %      the existing singleton*.
 %
-%      GUIDE_PROJECT('CALLBACK',hObject,eventData,handles,...) calls the local
-%      function named CALLBACK in GUIDE_PROJECT.M with the given input arguments.
+%      RUN_GUI('CALLBACK',hObject,eventData,handles,...) calls the local
+%      function named CALLBACK in RUN_GUI.M with the given input arguments.
 %
-%      GUIDE_PROJECT('Property','Value',...) creates a new GUIDE_PROJECT or raises the
+%      RUN_GUI('Property','Value',...) creates a new RUN_GUI or raises the
 %      existing singleton*.  Starting from the left, property value pairs are
-%      applied to the GUI before Guide_Project_OpeningFcn gets called.  An
+%      applied to the GUI before run_gui_OpeningFcn gets called.  An
 %      unrecognized property name or invalid value makes property application
-%      stop.  All inputs are passed to Guide_Project_OpeningFcn via varargin.
+%      stop.  All inputs are passed to run_gui_OpeningFcn via varargin.
 %
 %      *See GUI Options on GUIDE's Tools menu.  Choose "GUI allows only one
 %      instance to run (singleton)".
 %
 % See also: GUIDE, GUIDATA, GUIHANDLES
 
-% Edit the above text to modify the response to help Guide_Project
+% Edit the above text to modify the response to help run_gui
 
-% Last Modified by GUIDE v2.5 26-Apr-2024 11:09:17
+% Last Modified by GUIDE v2.5 29-Apr-2024 17:01:10
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
 gui_State = struct('gui_Name',       mfilename, ...
                    'gui_Singleton',  gui_Singleton, ...
-                   'gui_OpeningFcn', @Guide_Project_OpeningFcn, ...
-                   'gui_OutputFcn',  @Guide_Project_OutputFcn, ...
+                   'gui_OpeningFcn', @run_gui_OpeningFcn, ...
+                   'gui_OutputFcn',  @run_gui_OutputFcn, ...
                    'gui_LayoutFcn',  [] , ...
                    'gui_Callback',   []);
 if nargin && ischar(varargin{1})
@@ -44,13 +44,13 @@ end
 % End initialization code - DO NOT EDIT
 
 
-% --- Executes just before Guide_Project is made visible.
-function Guide_Project_OpeningFcn(hObject, eventdata, handles, varargin)
+% --- Executes just before run_gui is made visible.
+function run_gui_OpeningFcn(hObject, eventdata, handles, varargin)
 % This function has no output args, see OutputFcn.
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    structure with handles and user data (see GUIDATA)
-% varargin   command line arguments to Guide_Project (see VARARGIN)
+% varargin   command line arguments to run_gui (see VARARGIN)
 clc;
 global prev_pos;
 prev_pos = [0 0 1.315 0 0 0]';
@@ -58,25 +58,25 @@ global prev_angles;
 prev_angles = zeros(1,7);
 robot = make_robot();
 axes(handles.axes1);
-% scatter3(0, 0, 1.315, 'filled');
+scatter3(0, 0, 0);
 robot.plot(zeros(1,7));
 cla(handles.axes2);
 cla(handles.axes3);
 cla(handles.axes4);
 cla(handles.axes5);
 
-% Choose default command line output for Guide_Project
+% Choose default command line output for run_gui
 handles.output = hObject;
 
 % Update handles structure
 guidata(hObject, handles);
 
-% UIWAIT makes Guide_Project wait for user response (see UIRESUME)
+% UIWAIT makes run_gui wait for user response (see UIRESUME)
 % uiwait(handles.figure1);
 
 
 % --- Outputs from this function are returned to the command line.
-function varargout = Guide_Project_OutputFcn(hObject, eventdata, handles) 
+function varargout = run_gui_OutputFcn(hObject, eventdata, handles) 
 % varargout  cell array for returning output args (see VARARGOUT);
 % hObject    handle to figure
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -140,13 +140,13 @@ for ii = 1:50:l
 
     axes(handles.axes2);
     hold on;
-    plot(t_acc(1:100:ii), jointpos(1,1:100:ii), 'Linewidth', 2, 'Color','r');
-    plot(t_acc(1:100:ii), jointpos(2,1:100:ii), 'Linewidth', 2, 'Color','g');
-    plot(t_acc(1:100:ii), jointpos(3,1:100:ii), 'Linewidth', 2, 'Color','b');
-    plot(t_acc(1:100:ii), jointpos(4,1:100:ii), 'Linewidth', 2, 'Color','c');
-    plot(t_acc(1:100:ii), jointpos(5,1:100:ii), 'Linewidth', 2, 'Color','m');
-    plot(t_acc(1:100:ii), jointpos(6,1:100:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
-    plot(t_acc(1:100:ii), jointpos(7,1:100:ii), 'Linewidth', 2, 'Color','k');
+    plot(t_acc(1:50:ii), jointpos(1,1:50:ii), 'Linewidth', 2, 'Color','r');
+    plot(t_acc(1:50:ii), jointpos(2,1:50:ii), 'Linewidth', 2, 'Color','g');
+    plot(t_acc(1:50:ii), jointpos(3,1:50:ii), 'Linewidth', 2, 'Color','b');
+    plot(t_acc(1:50:ii), jointpos(4,1:50:ii), 'Linewidth', 2, 'Color','c');
+    plot(t_acc(1:50:ii), jointpos(5,1:50:ii), 'Linewidth', 2, 'Color','m');
+    plot(t_acc(1:50:ii), jointpos(6,1:50:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
+    plot(t_acc(1:50:ii), jointpos(7,1:50:ii), 'Linewidth', 2, 'Color','k');
     % hold off;
     title('Position Profiles');
     xlabel('Time [s]'), ylabel('Torque [Nm]');
@@ -159,13 +159,13 @@ for ii = 1:50:l
 
     axes(handles.axes3);
     hold on;
-    plot(t_acc(1:100:ii), jointvel(1,1:100:ii), 'Linewidth', 2, 'Color','r');
-    plot(t_acc(1:100:ii), jointvel(2,1:100:ii), 'Linewidth', 2, 'Color','g');
-    plot(t_acc(1:100:ii), jointvel(3,1:100:ii), 'Linewidth', 2, 'Color','b');
-    plot(t_acc(1:100:ii), jointvel(4,1:100:ii), 'Linewidth', 2, 'Color','c');
-    plot(t_acc(1:100:ii), jointvel(5,1:100:ii), 'Linewidth', 2, 'Color','m');
-    plot(t_acc(1:100:ii), jointvel(6,1:100:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
-    plot(t_acc(1:100:ii), jointvel(7,1:100:ii), 'Linewidth', 2, 'Color','k');
+    plot(t_acc(1:50:ii), jointvel(1,1:50:ii), 'Linewidth', 2, 'Color','r');
+    plot(t_acc(1:50:ii), jointvel(2,1:50:ii), 'Linewidth', 2, 'Color','g');
+    plot(t_acc(1:50:ii), jointvel(3,1:50:ii), 'Linewidth', 2, 'Color','b');
+    plot(t_acc(1:50:ii), jointvel(4,1:50:ii), 'Linewidth', 2, 'Color','c');
+    plot(t_acc(1:50:ii), jointvel(5,1:50:ii), 'Linewidth', 2, 'Color','m');
+    plot(t_acc(1:50:ii), jointvel(6,1:50:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
+    plot(t_acc(1:50:ii), jointvel(7,1:50:ii), 'Linewidth', 2, 'Color','k');
     % hold off;
     title('Velocity Profiles');
     xlabel('Time [s]'), ylabel('Torque [Nm]');
@@ -178,13 +178,13 @@ for ii = 1:50:l
 
     axes(handles.axes5);
     hold on;
-    plot(t_acc(1:200:ii), tau_acc(1,1:200:ii), 'Linewidth', 2, 'Color','r');
-    plot(t_acc(1:200:ii), tau_acc(2,1:200:ii), 'Linewidth', 2, 'Color','g');
-    plot(t_acc(1:200:ii), tau_acc(3,1:200:ii), 'Linewidth', 2, 'Color','b');
-    plot(t_acc(1:100:ii), tau_acc(4,1:100:ii), 'Linewidth', 2, 'Color','c');
-    plot(t_acc(1:100:ii), tau_acc(5,1:100:ii), 'Linewidth', 2, 'Color','m');
-    plot(t_acc(1:100:ii), tau_acc(6,1:100:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
-    plot(t_acc(1:100:ii), tau_acc(7,1:100:ii), 'Linewidth', 2, 'Color','k');
+    plot(t_acc(1:50:ii), tau_acc(1,1:50:ii), 'Linewidth', 2, 'Color','r');
+    plot(t_acc(1:50:ii), tau_acc(2,1:50:ii), 'Linewidth', 2, 'Color','g');
+    plot(t_acc(1:50:ii), tau_acc(3,1:50:ii), 'Linewidth', 2, 'Color','b');
+    plot(t_acc(1:50:ii), tau_acc(4,1:50:ii), 'Linewidth', 2, 'Color','c');
+    plot(t_acc(1:50:ii), tau_acc(5,1:50:ii), 'Linewidth', 2, 'Color','m');
+    plot(t_acc(1:50:ii), tau_acc(6,1:50:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
+    plot(t_acc(1:50:ii), tau_acc(7,1:50:ii), 'Linewidth', 2, 'Color','k');
     % hold off;
     title('Torque Profiles');
     xlabel('Time [s]'), ylabel('Torque [Nm]');
@@ -197,13 +197,13 @@ for ii = 1:50:l
 
     axes(handles.axes4);
     hold on;
-    plot(t_acc(1:200:ii), jointacc(1,1:200:ii), 'Linewidth', 2, 'Color','r');
-    plot(t_acc(1:200:ii), jointacc(2,1:200:ii), 'Linewidth', 2, 'Color','g');
-    plot(t_acc(1:200:ii), jointacc(3,1:200:ii), 'Linewidth', 2, 'Color','b');
-    plot(t_acc(1:100:ii), jointacc(4,1:100:ii), 'Linewidth', 2, 'Color','c');
-    plot(t_acc(1:100:ii), jointacc(5,1:100:ii), 'Linewidth', 2, 'Color','m');
-    plot(t_acc(1:100:ii), jointacc(6,1:100:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
-    plot(t_acc(1:100:ii), jointacc(7,1:100:ii), 'Linewidth', 2, 'Color','k');
+    plot(t_acc(1:50:ii), jointacc(1,1:50:ii), 'Linewidth', 2, 'Color','r');
+    plot(t_acc(1:50:ii), jointacc(2,1:50:ii), 'Linewidth', 2, 'Color','g');
+    plot(t_acc(1:50:ii), jointacc(3,1:50:ii), 'Linewidth', 2, 'Color','b');
+    plot(t_acc(1:50:ii), jointacc(4,1:50:ii), 'Linewidth', 2, 'Color','c');
+    plot(t_acc(1:50:ii), jointacc(5,1:50:ii), 'Linewidth', 2, 'Color','m');
+    plot(t_acc(1:50:ii), jointacc(6,1:50:ii), 'Linewidth', 2, 'Color',[0.5,0.5,0.5]);
+    plot(t_acc(1:50:ii), jointacc(7,1:50:ii), 'Linewidth', 2, 'Color','k');
     % hold off;
     title('Acceleration Profiles');
     xlabel('Time [s]'), ylabel('Torque [Nm]');

@@ -6,6 +6,9 @@ function [Mlist,Glist] = make_dynamics_model(robot)
 % Output: Mlist - 4x4x7 matrix containing all the transformation matrices between consecutive link frames
 %         Glist - 6x6x6 matrix containing the spatial inertia matrices of each link
 
+%% URL for Robot URDF
+% https://github.com/miladehghani/KUKA_IIWA_URDF/blob/master/iiwa14.urdf
+
 %% Link poses when the robot is in the home configuration
 
 [M01, M12, M23, M34, M45, M56, M67, M78] = calculatelinkframes(robot);
