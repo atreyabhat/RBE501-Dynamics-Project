@@ -21,5 +21,4 @@ Unzip contents of this project in a new folder along with [Peter Corke's Robotic
 
 Note: Make sure you have the necessary dependencies and MATLAB toolboxes installed before running the project.
 
-## Results
 
