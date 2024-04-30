@@ -22,12 +22,9 @@ function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual,
 
     fprintf('Calculating the Inverse Kinematics... \n');
 
-    % title('Inverse Dynamics Control');
-
     % Calculate the inverse kinematics
     waypoints = zeros(n,nPts);
 
-    %%
     % Current Pose and Joint Angles of Arm
     M = xyzrpy_to_transformation(path(:,1));
     currentQ = zeros(1,7);
@@ -71,8 +68,6 @@ function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual,
             currentPose = MatrixLog6(double(robot.fkine(currentQ)));
             currentPose = [currentPose(3,2) currentPose(1,3) currentPose(2,1) currentPose(1:3,4)']';
         
-            e = currentPose - desiredPose;
-        
             % Increment the counter
             iteration = iteration + 1;
         end
@@ -88,14 +83,12 @@ function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual,
     fprintf('IK Done.\n');
 
     %% Torque-Based Motion Control
-    % Now, for each pair of consecutive waypoints, we will first calculate a
-    % trajectory between these two points, and then calculate the torque
+    % Now, for each pair of consecutive waypoints, we will first calculate a trajectory between these two points, and then calculate the torque
     % profile necessary to move from one point to the next.
     fprintf('Generating the Trajectory and Torque Profiles... \n');
     nbytes = fprintf('0%%');
 
-    % Inititalize the variables where we will store the torque profiles, joint
-    % positions, and time, so that we can display them later
+    % Inititalize the variables where we will store the torque profiles, joint positions, and time, so that we can display them later
     tau_acc = [];
     jointPos_acc = [];
     t_acc = [];
@@ -114,11 +107,12 @@ function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual,
         jointPos_prescribed = zeros(n,size(t,2)); % Joint Variables (Prescribed)
         jointVel_prescribed = zeros(n,size(t,2)); % Joint Velocities (Prescribed)
         jointAcc_prescribed = zeros(n,size(t,2)); % Joint Accelerations (Prescribed)
-        tau_prescribed      = zeros(n,size(t,2)); % Joint Torques
+        tau_prescribed      = zeros(n,size(t,2)); % Joint Torques (Prescribed)
 
         jointPos_actual = zeros(n,size(t,2)); % Joint Variables (Actual)
         jointVel_actual = zeros(n,size(t,2)); % Joint Velocities (Actual)
-        jointAcc_actual = zeros(n,size(t,2));
+        jointAcc_actual = zeros(n,size(t,2)); % Joint Accelerations (Actual)
+
         % For each joint
         for ii = 1 : n
             % Calculate a trajectory using a quintic polynomial
@@ -185,6 +179,6 @@ function [flag, currentQ, t_acc, jointPos_acc, jointVel_actual, jointAcc_actual,
         
         t_acc = [t_acc t+t(end)*(jj-1)];
     end
-
+    
     flag = true;
 end
