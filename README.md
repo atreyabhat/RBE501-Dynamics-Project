@@ -13,7 +13,7 @@ It also plots the states (joint position, joint velocity, joint acceleration and
 Unzip contents of this project in a new folder along with [Peter Corke's Robotics Toolbox](https://petercorke.com/toolboxes/robotics-toolbox/) for MATLAB (Version 10.4), and follow the steps below:
 
 1. Launch MATLAB and navigate to the project directory.
-2. Open the `run_gui.m` script.
+2. Open and execute the `run_gui.m` script.
 3. In the GUI window, you will find input fields where you can specify the desired position of the end effector of the arm in terms of XYZ and RPY coordinates along with payload.
 4. Enter the desired values in the input fields.
 5. Click on the "Move" button to initiate the calculations.
