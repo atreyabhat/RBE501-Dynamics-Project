@@ -15,57 +15,64 @@ function [tau,V,Vdot] = rne(params)
 % Output: tau  - n-dimensional column vector of generalized joint forces
 %         V    - 6x(n+1) matrix - each column represents the twist of one of the robot's links
 %         Vdot - 6x(n+1) matrix - each column represents the acceleration of one of the robot's links
+%
+% Forward iterations
+% YOUR CODE HERE 
 
+n = size(params.S, 2);
 g = params.g;
-S = params.S;
-M = params.M;
 G = params.G;
-jointPos = params.jointPos;
-jointVel = params.jointVel;
-jointAcc = params.jointAcc;
+M = params.M;
+S = params.S;
+q = params.jointPos;
+qd = params.jointVel;
+qdd = params.jointAcc;
 
-n = size(S, 2);  % Number of joints
+A = zeros(6, n);
+V = zeros(6,n+1);
+Vdot = zeros(6,n+1);
+Vdot(:,1) = [0 0 0 -params.g'];
+tau = zeros(n,1);
 
-M_h_j = zeros(4,4,n);
-M_h_j(:,:,1) = M(:,:,1);
-for i = 2:n+1
-    M_h_j(:,:,i) = M_h_j(:,:,i-1) * M(:,:,i);
+% Compute A
+Mx = zeros(4,4,n);
+Mx(:,:,1) = M(:,:,1);
+for ii = 2:n+1
+    Mx(:,:,ii) = Mx(:,:,ii-1) * M(:,:,ii);
 end
 
 A = zeros(6,n);
-for i = 1:n
-    A(:,i) = adjoint(M_h_j(:,:,i)) \ S(:,i);
+for ii = 1:n
+    A(:,ii) = adjoint(Mx(:,:,ii)) \ S(:,ii);
 end
 
-T_i = zeros(4,4,n+1);
-for j = 1:n
-    T_iI = fkine(A(:,j), M(:,:,j), jointPos(j), 'body');
-    T_i(:,:,j) = T_iI \ eye(4);
+% compute TIi
+T_Ii = zeros(4,4,n+1);
+for ii = 1:n
+    T_iI = fkine(A(:,ii), M(:,:,ii), q(ii), 'body');
+    T_Ii(:,:,ii) = T_iI \ eye(4);
 end
-T_i(:,:,n+1) = M(:,:,n+1) \ eye(4);
-
-V = zeros(6,n+1);
-Vdot = zeros(6,n+1);
-
-Vdot(:,1) = [0 0 0 -g(1) -g(2) -g(3)]';
+T_Ii(:,:,n+1) = M(:,:,n+1) \ eye(4);
 
 
-% Forward iterations
-for k = 1:n
-    AdT = adjoint(T_i(:,:,k));
-    V(:,k+1) = A(:,k) * jointVel(k) +  AdT * V(:,k);
-    Vdot(:,k+1) = A(:,k) * jointAcc(k) + AdT * Vdot(:,k) + ad(V(:,k+1)) * A(:,k) * jointVel(k);
+for ii = 1:n
+    AdT_Ii = adjoint(T_Ii(:,:,ii));
+    V(:,ii+1) = A(:,ii) * params.jointVel(ii) + AdT_Ii * V(:,ii);
+    Vdot(:,ii+1) = A(:,ii) * params.jointAcc(ii) + AdT_Ii * Vdot(:,ii) + ad(V(:,ii+1)) * A(:,ii) * params.jointVel(ii);
 end
+    
+
+
 
 % Backward iterations
-tau = zeros(n,1);
-F = params.Ftip;
+
+G = params.G;
+F_next = params.Ftip;
 
 for i = n:-1:1
-    Wi = G(:,:,i) * Vdot(:,i+1) - ad(V(:,i+1))' * G(:,:,i) * V(:,i+1) + adjoint(T_i(:,:,i+1))'*F;
-    tau(i) = Wi' * A(:,i);
-    F = Wi;
+    F = G(:,:,i) * Vdot(:,i+1) - ad(V(:,i+1))' * G(:,:,i) * V(:,i+1) + adjoint(T_Ii(:,:,i+1))' * F_next;
+    tau(i) = F' * A(:,i);
+    F_next = F;
 end
-
 
 end
