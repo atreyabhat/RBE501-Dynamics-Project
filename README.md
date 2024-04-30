@@ -1,4 +1,4 @@
-# Mini Project 2 - GUI Based Torque Based Control of Kuka IIWA-14 ARM
+# GUI Based Dynamic Control of Kuka IIWA-14 ARM
 
 This Project contains a Graphical User Interface (GUI) that displays and provides controls to the end user for given the robotic arm. 
 It also plots the states (joint position, joint velocity, joint acceleration and torques) of the robot in real time.
