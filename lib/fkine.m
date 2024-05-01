@@ -1,18 +1,20 @@
-function T = fkine(S,M,q,frame)    
-    [~,joints] = size(S);
-    
-    if strcmp(frame,'space')
-        for i=joints:-1:1
-            if i ~= joints
-                T = twist2ht(S(:,i),q(i))*T;
-            else
-                T = twist2ht(S(:,i),q(i))*M;
-            end
+function T = fkine(S,M,q,frame)
+    num_joints = size(S, 2);
+    if strcmp(frame, 'space')
+        T = eye(4);
+        for i = 1:num_joints
+            T_joint = twist2ht(S(:,i), q(i));
+            T = T * T_joint;
         end
+        T = T*M;
+    end   
+    if strcmp(frame, 'body')
+        T = M;
+        for i = 1:num_joints
+            T_joint = twist2ht(S(:,i) , q(i));
 
-    elseif strcmp(frame,'body')
-        T = M * twist2ht(S(:,1),q(1));
-        for i=2:joints
-            T = T * twist2ht(S(:,i),q(i));
+            T = T * T_joint;
         end
+    end
 end
+

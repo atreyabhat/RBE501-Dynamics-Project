@@ -1,16 +1,10 @@
 function adV = ad(V)
-    w = V(1:3);
     v = V(4:6);
+    omega = V(1:3);
     
-    skew_w = [0 -w(3) w(2);
-              w(3) 0 -w(1);
-              -w(2) w(1) 0];
+    % skew-symmetric matrices
+    omega_hat = skew(omega);
+    v_hat = skew(v);
     
-    skew_v = [0 -v(3) v(2);
-              v(3) 0 -v(1);
-              -v(2) v(1) 0];
-    
-    adV = [skew_w zeros(3);
-           skew_v skew_w];
-   
+    adV = [omega_hat, zeros(3,3); v_hat , omega_hat];
 end

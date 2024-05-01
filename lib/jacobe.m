@@ -1,6 +1,7 @@
-function [J,T] = jacob0(S,q) 
+function J_b = jacobe(S,M,q)    
+    
     % Initialize
-    J = zeros(6, length(q));
+    J_s = zeros(6, length(q));
     
     % Iterate over each joint
     for i = 1:length(q)
@@ -13,9 +14,17 @@ function [J,T] = jacob0(S,q)
         
         % Slice the twist for joint i
         V = S(:, i);
-        V_trans = adjoint_twist(V, T);
+        V_trans = adjoint(V, T);
         
-        J(:, i) = V_trans;
+        J_s(:, i) = V_trans;
         
     end
+    
+    T = T*M;
+    
+    AdjT = adjoint_only(T);
+    
+    J_b = AdjT\J_s;
+    
+    
 end

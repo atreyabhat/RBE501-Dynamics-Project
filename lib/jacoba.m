@@ -1,15 +1,19 @@
-function J_a = jacoba(S,M,q)        
-    % Space Jacobian
-    J = jacob0(S,q);
-    T = fkine(S,M,q,'space');
+function J_a = jacoba(S,M,q)    
     
-    p = T(1:3,4);
-    [~,col] = size(J);
+    [J,T] = jacob0(S,q);
+    J_a = zeros(3,length(q));
     
-    for i = 1:col
-        J_w = J(1:3,i);
-        J_v = J(4:6,i);
-        J_a(:,i) = J_v - skew(p) * J_w;
-    end
+    T = T * M;
+    R = T(1:3, 1:3);
+    p = T(1:3, 4);
+    % Construct the skew-symmetric matrix of p
+    p_skew = [0, -p(3), p(2);
+           p(3), 0, -p(1);
+           -p(2), p(1), 0];
     
+    Jw = J(1:3,:);
+    Jv = J(4:6,:);
+    
+    J_a = Jv- p_skew * Jw;
+
 end

@@ -38,6 +38,7 @@ for ii = 1 : n
     MM(:,ii) = rne(params_rne);
 end
 
+
 % Step 2: Calculate the Centripetal/Coriolis terms using the RNE algorithm
 params_rne.jointVel = params.jointVel;
 params_rne.jointAcc = zeros(n,1);
@@ -62,3 +63,4 @@ end
 
 
 end
+
